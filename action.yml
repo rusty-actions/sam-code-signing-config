@@ -1,0 +1,29 @@
+name: "SAM code signing config"
+description: "Generates functions code signing signatures from SAM template"
+author: rusty-apps
+inputs:
+  template:
+    description: "The SAM template containing the function definitions"
+    required: true
+    default: "template.yaml"
+  profile:
+    description: "The signing profile name to use for the signing"
+    default: ""
+    required: true
+  signer:
+    description: "Optional code signing arn to inject into the template"
+    default: ""
+    required: false
+outputs:
+  signing_config:
+    description: "The signing script block to send as part of the packaging"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.template }}
+    - ${{ inputs.profile }}
+    - ${{ inputs.signer }}
+branding:
+  icon: "check-square"
+  color: "green"
