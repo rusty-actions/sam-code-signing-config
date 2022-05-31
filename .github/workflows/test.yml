@@ -22,6 +22,8 @@ jobs:
         run: |
           EXPECTED="SIGNING_CONFIG: --signing-profiles HelloWorldFunction=TestProfile HelloAgainFunction=TestProfile"
           OUT=$(bash ./entrypoint.sh ./test/template.yml TestProfile | grep SIGNING_CONFIG | xargs)
+          echo "EXPECTED: $EXPECTED"
+          echo    ACTUAL: $OUT"
           [[ $OUT = $EXPECTED ]] || exit 3
           
       - name: Lint the dockerfile
