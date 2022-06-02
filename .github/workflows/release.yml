@@ -7,45 +7,27 @@ on:
       - main
 
 jobs:
+  test:
+    uses: rusty-actions/sam-code-signing-config/.github/workflows/test.yml@main
   action:
     name: Build and release action
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       
       - name: bump the version
         id: bumper
         uses: tomerfi/version-bumper-action@1.1.3
 
-      - name: Create a release name
-        id: release_name
-        uses: actions/github-script@v6
-        with:
-          script: |
-            var retval = '${{ steps.bumper.outputs.new_version }}'
-            if ('${{ github.event.inputs.title }}') {
-              retval = retval.concat(' - ${{ github.event.inputs.title }}')
-            }
-            core.setOutput('value', retval)
-      - name: Create a release
-        id: gh_release
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const repo_name = context.payload.repository.full_name
-            const response = await github.request('POST /repos/' + repo_name + '/releases', {
-              tag_name: '${{ steps.bumper.outputs.new_version }}',
-              name: '${{ steps.release_name.outputs.value }}',
-              generate_release_notes: true
-            })
-            core.setOutput('html_url', response.data.html_url)
-
-      - name: Test for major version change
+      - name: Update README major version
         id: version_count
         run: echo "::set-output name=count::$(fgrep -c sam-code-signing-config@v${{ steps.bumper.outputs.major_part }} ) README.md"
 
-      - name: Update usage example
+      - name: Update README usage example
         if: steps.version_count.outputs.count == 0
         run: |
           sed -i 's|uses\: rusty-actions/sam-code-signing-config@.*|uses\: rusty-actions/sam-code-signing-config@v${{ steps.bumper.outputs.major_part }}|g' README.md
@@ -64,3 +46,18 @@ jobs:
             git commit -m "docs: update README usage section with v${{ steps.bumper.outputs.major_part }} [skip ci]"
             git push
           fi
+
+      - name: Create tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ steps.bumper.outputs.new_version }}
+
+      - name: Create Release
+        id: create_release
+        uses: nickatnight/releases-action@v3
+        #        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: main
+          tag: ${{ steps.bumper.outputs.new_version }}

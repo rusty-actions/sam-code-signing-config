@@ -5,12 +5,18 @@ on:
   pull_request:
     types:
       - opened
-      - re-opened
+      - reopened
       - synchronize
+
+  push:
+    branches-ignore:
+      - main
+
+  workflow_call:
 
 jobs:
   test:
-    name: Test Docker script
+    name: Test script and action
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
@@ -20,10 +26,26 @@ jobs:
 
       - name: Test entry point or fail
         run: |
-          EXPECTED="SIGNING_CONFIG: --signing-profiles  HelloWorldFunction=TestProfile  HelloAgainFunction=TestProfile"
-          OUT=$(bash ./entrypoint.sh ./test/template.yml TestProfile | grep SIGNING_CONFIG)
-          [[ $OUT = $EXPECTED ]] || exit 3
-          
+          EXPECTED="SIGNING_CONFIG: --signing-profiles HelloWorldFunction=TestProfile HelloAgainFunction=TestProfile"
+          OUT=$(bash ./entrypoint.sh ./test/template.yml TestProfile | grep SIGNING_CONFIG | xargs)
+          echo "::debug::EXPECTED: $EXPECTED"
+          echo ":debug::   ACTUAL: $OUT"
+          [ "$OUT" = "$EXPECTED" ] || exit 1
+
       - name: Lint the dockerfile
         uses: hadolint/hadolint-action@v2.0.0
 
+      - name: Test the action
+        id: test
+        uses: ./
+        with:
+          template: ./test/template.yml
+          profile: "TestProfile"
+
+      - name: Validate action output
+        run: |
+          EXPECTED="--signing-profiles HelloWorldFunction=TestProfile HelloAgainFunction=TestProfile"
+          OUT="$(echo ${{ steps.test.outputs.signing_config }} | xargs)"
+          echo "::debug::EXPECTED: $EXPECTED"
+          echo ":debug::   ACTUAL: $OUT"
+          [ "$OUT" = "$EXPECTED" ] || exit 2
