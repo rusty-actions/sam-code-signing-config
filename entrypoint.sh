@@ -31,7 +31,7 @@ if [ "${SIGNER}x" != "x" ]; then
   echo "::endgroup"
 fi
 
-SIGNING_CONFIG=$(fgrep -B1 "Type: AWS::Serverless::Function" $TEMPLATE | grep -e ':$' | sed "s/^ *\(.*\):/\1=$PROFILE /" | grep -ve '^#' | tr -d '\n')
+SIGNING_CONFIG=$(fgrep -B1 "Type: AWS::Serverless::Function" $TEMPLATE | grep -e ':$' | sed "s/^ *\(.*\):/\1=$PROFILE /" | grep -ve '^#' | tr -d '\n' | xargs)
 SUCCESS=$?
 
 OUTPUT="--signing-profiles $SIGNING_CONFIG"
