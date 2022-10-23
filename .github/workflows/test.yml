@@ -22,18 +22,18 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Test entry point or fail
         run: |
           EXPECTED="SIGNING_CONFIG: --signing-profiles HelloWorldFunction=TestProfile HelloAgainFunction=TestProfile"
           OUT=$(bash ./entrypoint.sh ./test/template.yml TestProfile | grep SIGNING_CONFIG | xargs)
           echo "::debug::EXPECTED: $EXPECTED"
-          echo ":debug::   ACTUAL: $OUT"
+          echo "::debug::   ACTUAL: $OUT"
           [ "$OUT" = "$EXPECTED" ] || exit 1
 
       - name: Lint the dockerfile
-        uses: hadolint/hadolint-action@v2.0.0
+        uses: hadolint/hadolint-action@v2.1.0
 
       - name: Test the action
         id: test
