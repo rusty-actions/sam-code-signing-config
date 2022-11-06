@@ -34,7 +34,7 @@ fi
 SIGNING_CONFIG=$(fgrep -B1 "Type: AWS::Serverless::Function" $TEMPLATE | grep -e ':$' | sed "s/^ *\(.*\):/\1=$PROFILE /" | grep -ve '^#' | tr -d '\n')
 SUCCESS=$?
 
-OUTPUT="--signing-profiles$SIGNING_CONFIG"
+OUTPUT="--signing-profiles $SIGNING_CONFIG"
 
 echo "::group::signing output"
 echo "SIGNING_CONFIG: $OUTPUT"

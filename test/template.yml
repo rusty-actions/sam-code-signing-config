@@ -43,23 +43,23 @@ Resources:
           Properties:
             Path: /hello/again
             Method: get
-#  HelloCommentedFunction:
-#    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-#    Properties:
-#      CodeUri: HelloAgainFunction
-#      Handler: helloagain.App::handleRequest
-#      Runtime: java11
-#      Architectures:
-#        - x86_64
-#      MemorySize: 512
-#      CodeSigningConfigArn: !Ref CodeSigningConfig
-#      AutoPublishAlias: latest
-#      Events:
-#        HelloWorld:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            Path: /hello/again
-#            Method: get
+  #  HelloCommentedFunction:
+  #    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #    Properties:
+  #      CodeUri: HelloAgainFunction
+  #      Handler: helloagain.App::handleRequest
+  #      Runtime: java11
+  #      Architectures:
+  #        - x86_64
+  #      MemorySize: 512
+  #      CodeSigningConfigArn: !Ref CodeSigningConfig
+  #      AutoPublishAlias: latest
+  #      Events:
+  #        HelloWorld:
+  #          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+  #          Properties:
+  #            Path: /hello/again
+  #            Method: get
   CodeSigningConfig:
     Type: AWS::Lambda::CodeSigningConfig
     Properties:
