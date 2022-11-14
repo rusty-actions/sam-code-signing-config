@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     uses: rusty-actions/sam-code-signing-config/.github/workflows/test.yml@main
+
   action:
     name: Build and release action
     needs: test
@@ -25,7 +26,7 @@ jobs:
 
       - name: Update README major version
         id: version_count
-        run: echo "count=$(fgrep -c sam-code-signing-config@v${{ steps.bumper.outputs.major_part }} ) README.md" >> $GITHUB_OUTPUT
+        run: echo "count=$(fgrep -c sam-code-signing-config@v${{ steps.bumper.outputs.major_part }} README.md)" >> $GITHUB_OUTPUT
 
       - name: Update README usage example
         if: steps.version_count.outputs.count == 0
@@ -52,12 +53,9 @@ jobs:
         with:
           tag: ${{ steps.bumper.outputs.new_version }}
 
-      - name: Create Release
-        id: create_release
-        uses: nickatnight/releases-action@v3
-        #        if: startsWith(github.ref, 'refs/tags/')
+      - name: Create a Release
+        uses: elgohr/Github-Release-Action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: main
-          tag: ${{ steps.bumper.outputs.new_version }}
+          title: ${{ steps.bumper.outputs.new_version }}
