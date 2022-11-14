@@ -40,6 +40,8 @@ echo "::group::signing output"
 echo "SIGNING_CONFIG: $OUTPUT"
 echo "::endgroup"
 
-echo "::set-output name=signing_config::$OUTPUT"
+echo "signing_config<<EOF" >> $GITHUB_OUTPUT
+echo "${OUTPUT}" >> $GITHUB_OUTPUT
+echo "EOF" >> $GITHUB_OUTPUT
 
 exit $SUCCESS
